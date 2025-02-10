@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <main
       className={cn(
-        "flex h-full flex-col items-center justify-center bg-gradient"
+        "flex h-full flex-col items-center justify-center bg-gradient h-screen"
       )}
     >
       <div className=" space-y-6 text-center">
@@ -21,15 +21,12 @@ export default function Home() {
             poppins.className
           )}
         >
-          Auth.js
+          Glass System
         </h1>
-        <p className=" text-slate-400 text-lg">
-          A simple authentication service
-        </p>
         <div>
           <LoginButton mode="modal" asChild>
             <Button variant="secondary" size="lg" className=" text-lg">
-              Sign in
+              Inicia Sesión
             </Button>
           </LoginButton>
         </div>

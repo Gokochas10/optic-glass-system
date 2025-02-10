@@ -71,10 +71,10 @@ export const LoginForm = () => {
       headerLabel="Welcome back"
       backButtonLabel="Don't have an account?"
       backButtonHref="/auth/register"
-      showSocial={true}
+      showSocial={false}
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6 h-fit">
           <div className=" space-y-4">
             {showTwoFactor && (
               <FormField
