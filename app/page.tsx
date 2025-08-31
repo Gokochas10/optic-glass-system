@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <main
       className={cn(
-        "flex flex-col items-center justify-center bg-gradient"
+        "flex flex-col items-center justify-center bg-gradient h-screen"
       )}
     >
       <div className=" space-y-6 text-center">
