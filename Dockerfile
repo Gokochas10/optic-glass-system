@@ -1,65 +1,48 @@
-# Usar la imagen oficial de Node.js como base
-FROM node:18-alpine AS base
+# Usar Node.js 20 basado en Debian para compatibilidad con Prisma
+FROM node:20-bullseye
 
-# Instalar dependencias solo cuando sea necesario
-FROM base AS deps
-# Verificar https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine para entender por qué libc6-compat es necesario.
-RUN apk add --no-cache libc6-compat
+# Instalar dependencias necesarias (OpenSSL, librerías comunes)
+RUN apt-get update && apt-get install -y \
+    openssl \
+    libc6 \
+    libssl-dev \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Crear directorio de trabajo
 WORKDIR /app
 
-# Copiar archivos de dependencias
-COPY package.json package-lock.json* ./
-COPY prisma ./prisma/
+# Copiar package.json y lock
+COPY package*.json ./
 
 # Instalar dependencias
 RUN npm ci --only=production
 
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Copiar resto del código
 COPY . .
 
-# Generar el cliente de Prisma
-RUN npx prisma generate
+# No generamos Prisma en build; lo haremos en runtime
+# RUN npx prisma generate  <-- eliminado
 
-# Construir la aplicación Next.js
+# Construir la app Next.js
 RUN npm run build
 
-# Production image, copy all the files and run next
-FROM base AS runner
-WORKDIR /app
+# Establecer variables de entorno de producción
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+# Crear usuario no root
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 nextjs
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Copiar el cliente de Prisma generado
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-
-# Copiar archivos de la aplicación
-COPY --from=builder /app/public ./public
-
-# Establecer el propietario correcto de los archivos
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Copiar la aplicación construida
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Cambiar propietario de la app
+RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
-# set hostname to localhost
-ENV HOSTNAME "0.0.0.0"
-
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "server.js"] 
+# Comando para ejecutar Next.js y generar Prisma en runtime
+CMD ["node", "server.js"]
