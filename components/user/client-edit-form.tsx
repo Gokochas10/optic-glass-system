@@ -39,24 +39,31 @@ export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
   function handleSubmit(values: z.infer<typeof editFormSchema>) {
     startTransition(async () => {
       try {
-        console.log("values", values);
+        console.log("📝 Enviando datos para actualización:", values);
 
         const response = await updateClientExtraData(client.id, values);
-        console.log("paso update client", response);
+        console.log("📊 Respuesta del servidor:", response);
 
         if (response.success && onSuccess) {
+          console.log("✅ Actualización exitosa, llamando onSuccess");
           onSuccess();
         } else if (response.error) {
+          console.log("❌ Error en la actualización:", response.error);
           // Mostrar errores de validación del servidor en el frontend
-          Object.keys(response.error).forEach((key) => {
-            form.setError(key as keyof z.infer<typeof editFormSchema>, {
-              type: "manual",
-              message: (response.error as unknown as Record<string, string>)[key],
+          if (typeof response.error === 'object') {
+            Object.keys(response.error).forEach((key) => {
+              form.setError(key as keyof z.infer<typeof editFormSchema>, {
+                type: "manual",
+                message: (response.error as unknown as Record<string, string>)[key],
+              });
             });
-          });
+          } else {
+            // Error general
+            console.error("Error general:", response.error);
+          }
         }
       } catch (error) {
-        console.error("Error al actualizar el cliente:", error);
+        console.error("❌ Error al actualizar el cliente:", error);
       }
     });
   }
@@ -64,8 +71,8 @@ export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        {/* Información del cliente (solo lectura) */}
-        <div className="space-y-2">
+        {/* Información del cliente (solo lectura) - 2 columnas */}
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-medium">Nombre Completo</label>
             <Input value={client.fullName} disabled className="bg-gray-50" />
@@ -88,22 +95,24 @@ export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
           </div>
         </div>
 
-        {/* Campos editables */}
-        <FormItem>
-          <FormLabel>Edad</FormLabel>
-          <FormControl>
-            <Input {...form.register("age")} type="number" placeholder="Edad" />
-          </FormControl>
-          <FormMessage>{form.formState.errors.age?.message}</FormMessage>
-        </FormItem>
+        {/* Campos editables - 2 columnas */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormItem>
+            <FormLabel>Edad</FormLabel>
+            <FormControl>
+              <Input {...form.register("age")} type="number" placeholder="Edad" />
+            </FormControl>
+            <FormMessage>{form.formState.errors.age?.message}</FormMessage>
+          </FormItem>
 
-        <FormItem>
-          <FormLabel>Ocupación</FormLabel>
-          <FormControl>
-            <Input {...form.register("occupation")} placeholder="Ocupación" />
-          </FormControl>
-          <FormMessage>{form.formState.errors.occupation?.message}</FormMessage>
-        </FormItem>
+          <FormItem>
+            <FormLabel>Ocupación</FormLabel>
+            <FormControl>
+              <Input {...form.register("occupation")} placeholder="Ocupación" />
+            </FormControl>
+            <FormMessage>{form.formState.errors.occupation?.message}</FormMessage>
+          </FormItem>
+        </div>
 
         <Button type="submit" disabled={loading} className="w-full">
           {loading ? "Actualizando..." : "Actualizar Cliente"}

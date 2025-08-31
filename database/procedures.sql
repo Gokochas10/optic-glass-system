@@ -22,6 +22,7 @@ BEGIN
     RETURN TRUE;
 EXCEPTION
     WHEN OTHERS THEN
+        RAISE NOTICE 'Error en sp_update_client_extra_data: %', SQLERRM;
         RETURN FALSE;
 END;
 $$ LANGUAGE plpgsql;
@@ -44,4 +45,5 @@ SELECT
     COALESCE(gs.age, 0) as age,
     COALESCE(gs.job, '') as occupation
 FROM public."Client" p
-LEFT JOIN glass_store."Client" gs ON p.id = gs.id; 
+LEFT JOIN glass_store."Client" gs ON p.id = gs.id
+WHERE p."enterpriseId" = '2'; 

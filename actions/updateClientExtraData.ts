@@ -10,11 +10,11 @@ const updateSchema = z.object({
 
 export async function updateClientExtraData(clientId: string, data: z.infer<typeof updateSchema>) {
   try {
-    console.log("Datos recibidos para actualización:", data);
+    console.log("🔄 Iniciando actualización de cliente:", { clientId, data });
 
     // Validamos los datos antes de actualizar
     const validatedData = updateSchema.parse(data);
-    console.log("Datos validados:", validatedData);
+    console.log("✅ Datos validados:", validatedData);
 
     // Actualizar solo age y occupation usando el procedimiento almacenado
     const success = await ClientService.updateClientExtraData(clientId, {
@@ -22,14 +22,17 @@ export async function updateClientExtraData(clientId: string, data: z.infer<type
       occupation: validatedData.occupation || '',
     });
 
+    console.log("📊 Resultado de la actualización:", success);
+
     if (success) {
-      console.log("Cliente actualizado exitosamente");
+      console.log("✅ Cliente actualizado exitosamente usando procedimiento almacenado");
       return { success: true };
     } else {
-      return { success: false, error: "No se pudo actualizar el cliente." };
+      console.log("❌ El procedimiento almacenado retornó false");
+      return { success: false, error: "No se pudo actualizar el cliente. El procedimiento almacenado falló." };
     }
   } catch (error) {
-    console.error("Error en updateClientExtraData:", error);
+    console.error("❌ Error en updateClientExtraData:", error);
 
     if (error instanceof z.ZodError) {
       // Manejo específico de errores de Zod

@@ -15,8 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { saveClient } from "@/actions/addClient";
-import { ClientForm } from "./client-form";
+import { ClientEditForm } from "./client-edit-form";
 import { toast } from "sonner";
 import DeleteForm from "./delete-form";
 import { MdEdit, MdMedicalInformation } from "react-icons/md";
@@ -66,9 +65,9 @@ const ActionsCell = ({ client, refreshData, showToastMessage }: { client: Client
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar Cliente</DialogTitle>
-            <DialogDescription>Edita los detalles del cliente.</DialogDescription>
+            <DialogDescription>Edita solo la edad y ocupación del cliente.</DialogDescription>
           </DialogHeader>
-          <ClientForm client={client} onSuccess={() => {
+          <ClientEditForm client={client} onSuccess={() => {
             setEditDialogOpen(false)
             toast.success("Cliente actualizado con éxito")
           }} />

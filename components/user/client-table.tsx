@@ -26,7 +26,7 @@ import { useState } from "react"
 import { Input } from "../ui/input"
 import { DataTablePagination } from "./client-table-pagination"
 import { X } from "lucide-react"
-import { ClientForm } from "./client-form"
+import { ClientCreateForm } from "./client-create-form"
 import { toast } from "sonner"
 
 interface DataTableProps<TData, TValue> {
@@ -73,18 +73,18 @@ export function ClientTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <Button onClick={() => setShowForm(!showForm)}>Agregar Cliente</Button>
+        {/* <Button onClick={() => setShowForm(!showForm)}>Agregar Cliente</Button> */}
       </div>
       {showForm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
-            <button 
+            <button
               className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-200"
               onClick={() => setShowForm(false)}
             >
               <X className="w-5 h-5" />
             </button>
-            <ClientForm onSuccess={handleSuccess}/>
+            <ClientCreateForm onSuccess={handleSuccess} />
           </div>
         </div>
       )}
@@ -98,9 +98,9 @@ export function ClientTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

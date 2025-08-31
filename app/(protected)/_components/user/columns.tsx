@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { Client } from "@/types/user/client-types";
-import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,9 +20,8 @@ import { FaCopy } from "react-icons/fa";
 import { ClientEditForm } from "@/components/user/client-edit-form";
 import MedRecordModal from "@/components/user/med-record-modal";
 
-
-// Nuevo componente para la celda de acciones
-const ActionsCell = ({
+// Componente para la celda de acciones
+export const ActionsCell = ({
   client,
   refreshData
 }: {
@@ -100,55 +97,3 @@ const ActionsCell = ({
     </div>
   );
 };
-
-// Definir las columnas, usando el componente ActionsCell
-export const columns: ColumnDef<Client>[] = [
-  {
-    accessorKey: "ruc",
-    header: "RUC",
-  },
-  {
-    accessorKey: "fullName",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Nombres Completos
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "email",
-    header: "Correo",
-  },
-  {
-    accessorKey: "age",
-    header: "Edad",
-  },
-  {
-    accessorKey: "phone",
-    header: "Telefono",
-  },
-  {
-    accessorKey: "job",
-    header: "Ocupacion",
-  },
-  {
-    accessorKey: "address",
-    header: "Direccion",
-  },
-  {
-    id: "actions",
-    header: "Acciones",
-    cell: ({ row }) => {
-      const client = row.original;
-      return (
-        <ActionsCell
-          client={client}
-          refreshData={() => { return Promise.resolve() }}
-        />
-      );
-    },
-  },
-];

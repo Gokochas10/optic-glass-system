@@ -25,7 +25,6 @@ export async function getClients() {
         job: row.occupation || '',
         address: row.address || ''
       };
-      console.log("Cliente mapeado:", client);
       return client;
     });
 

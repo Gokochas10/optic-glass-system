@@ -60,22 +60,25 @@ export class ClientService {
     try {
       console.log(`🔄 Actualizando cliente ${id} con datos:`, data);
 
+      // Llamar al procedimiento almacenado
       const result = await db.$queryRaw<[{ sp_update_client_extra_data: boolean }]>`
         SELECT glass_store.sp_update_client_extra_data(
-          ${id}, 
-          ${data.age || 0}, 
-          ${data.occupation || ''}
-        )
+          ${id}::TEXT, 
+          ${data.age || 0}::INTEGER, 
+          ${data.occupation || ''}::TEXT
+        ) as sp_update_client_extra_data
       `;
 
-      const success = result[0].sp_update_client_extra_data;
+      const success = result[0]?.sp_update_client_extra_data;
+      console.log(`📊 Resultado del procedimiento:`, result);
+
       if (success) {
         console.log(`✅ Cliente ${id} actualizado exitosamente en glass_store.Client`);
       } else {
-        console.log(`❌ Error al actualizar cliente ${id}`);
+        console.log(`❌ Error al actualizar cliente ${id} - El procedimiento retornó false`);
       }
 
-      return success;
+      return success || false;
     } catch (error) {
       console.error('❌ Error updating client extra data:', error);
       throw error;
