@@ -23,10 +23,18 @@ export async function getMedRecordDetail(
     return null; // Si no se encuentra el registro, devolver null
   }
 
+  // Obtener el RUC del cliente desde public.Client
+  const clientWithRuc = await db.$queryRaw<any[]>`
+    SELECT "RUC" as ruc FROM public."Client" WHERE id = ${result.Client.id}
+  `;
+
+  const ruc = clientWithRuc.length > 0 ? clientWithRuc[0].ruc : '';
+
   // Mapear los datos de Prisma a la estructura de RecordTypes
   const mappedResult: RecordTypes = {
     client: {
       ...result.Client,
+      ruc: ruc, // Usar el RUC obtenido de la consulta raw
       email: result.Client.email || undefined,
       phone: result.Client.phone || undefined,
       job: result.Client.job || undefined,
@@ -92,7 +100,7 @@ export async function getMedRecordDetail(
     lensOptions: {
       lensType: result.LensOptions?.lensType as "Monofocales" | "Bifocales" | "Progresivos",
       protections: result.LensOptions?.protections as ("Blue" | "Antireflejo" | "Fotocromática" | "Blancos")[] || [],
-      
+
     },
   };
 
