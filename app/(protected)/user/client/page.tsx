@@ -11,10 +11,10 @@ export default function DemoPage() {
   useEffect(() => {
     const fetchClients = async () => {
       const data = await getClients()
-      setClients(data as Client[]) 
+      setClients(data as Client[])
     }
     fetchClients()
-  }, [clients])
+  }, [])
 
   return (
     <div className="w-full max-w-[1200px]">

@@ -3,6 +3,8 @@ export interface Client {
 
   id: string;
 
+  ruc: string;
+
   fullName: string;
 
   email?: string;

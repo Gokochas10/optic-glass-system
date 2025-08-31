@@ -35,31 +35,31 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: client
-      ? { 
-          ...client, 
-          phone: client.phone?.toString(),
-          email: client.email ?? undefined,
-          job: client.job ?? undefined,
-          address: client.address ?? undefined 
-        }
+      ? {
+        ...client,
+        phone: client.phone?.toString(),
+        email: client.email ?? undefined,
+        job: client.job ?? undefined,
+        address: client.address ?? undefined
+      }
       : {
-          fullName: "",
-          email: "",
-          age: 18,
-          phone: "",
-          job: "",
-          address: "",
-        },
+        fullName: "",
+        email: "",
+        age: 18,
+        phone: "",
+        job: "",
+        address: "",
+      },
   });
 
   function handleSubmit(values: z.infer<typeof formSchema>) {
     startTransition(async () => {
       try {
         console.log("values", values);
-        
+
         const response = await saveClient(values, client?.id);
         console.log("paso save client", response);
-        
+
         if (response.success && onSuccess) {
           onSuccess();
         } else if (response.error) {
@@ -84,7 +84,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
         <FormItem>
           <FormLabel>Nombre Completo</FormLabel>
           <FormControl>
-            <Input {...form.register("fullName")} placeholder="Nombre completo" />
+            <Input disabled {...form.register("fullName")} placeholder="Nombre completo" />
           </FormControl>
           <FormMessage>{form.formState.errors.fullName?.message}</FormMessage>
         </FormItem>
@@ -93,7 +93,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
         <FormItem>
           <FormLabel>Email</FormLabel>
           <FormControl>
-            <Input {...form.register("email")} type="email" placeholder="correo@example.com" />
+            <Input disabled {...form.register("email")} type="email" placeholder="correo@example.com" />
           </FormControl>
           <FormMessage>{form.formState.errors.email?.message}</FormMessage>
         </FormItem>
@@ -111,7 +111,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
           <FormItem>
             <FormLabel>Teléfono</FormLabel>
             <FormControl>
-              <Input {...form.register("phone")} type="text" placeholder="Teléfono" />
+              <Input disabled {...form.register("phone")} type="text" placeholder="Teléfono" />
             </FormControl>
             <FormMessage>{form.formState.errors.phone?.message}</FormMessage>
           </FormItem>
@@ -130,7 +130,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
           <FormItem>
             <FormLabel>Dirección</FormLabel>
             <FormControl>
-              <Input {...form.register("address")} placeholder="Dirección" />
+              <Input disabled {...form.register("address")} placeholder="Dirección" />
             </FormControl>
             <FormMessage>{form.formState.errors.address?.message}</FormMessage>
           </FormItem>

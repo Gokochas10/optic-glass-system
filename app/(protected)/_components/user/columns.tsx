@@ -15,31 +15,47 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { saveClient } from "@/actions/addClient";
-import { ClientForm } from "./client-form";
+
 import { toast } from "sonner";
-import DeleteForm from "./delete-form";
 import { MdEdit, MdMedicalInformation } from "react-icons/md";
-import { FaCopy, FaTrash } from "react-icons/fa";
-import MedRecordModal from "./med-record-modal";
+import { FaCopy } from "react-icons/fa";
+import { ClientEditForm } from "@/components/user/client-edit-form";
+import MedRecordModal from "@/components/user/med-record-modal";
+
 
 // Nuevo componente para la celda de acciones
-const ActionsCell = ({ client, refreshData, showToastMessage }: { client: Client, refreshData: () => void, showToastMessage: (message: string, status: "success" | "error") => void }) => {
+const ActionsCell = ({
+  client,
+  refreshData
+}: {
+  client: Client,
+  refreshData?: () => Promise<void>
+}) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [watchMedicalRecord, setWatchMedicalRecord] = useState(false);
 
   const handleEdit = () => {
     setEditDialogOpen(true);
   };
 
-  const handleDelete = () => {
-    setDeleteDialogOpen(true);
-  };
-
   const handleWatchMedicalReport = () => {
     setWatchMedicalRecord(true);
   }
+
+  const handleEditSuccess = async () => {
+    setEditDialogOpen(false);
+    toast.success("Cliente actualizado con éxito");
+
+    // Refrescar los datos después de la actualización
+    if (refreshData) {
+      try {
+        await refreshData();
+        console.log("✅ Datos refrescados después de la actualización");
+      } catch (error) {
+        console.error("❌ Error al refrescar datos:", error);
+      }
+    }
+  };
 
   return (
     <div>
@@ -66,23 +82,9 @@ const ActionsCell = ({ client, refreshData, showToastMessage }: { client: Client
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar Cliente</DialogTitle>
-            <DialogDescription>Edita los detalles del cliente.</DialogDescription>
+            <DialogDescription>Edita solo la edad y ocupación del cliente.</DialogDescription>
           </DialogHeader>
-          <ClientForm client={client} onSuccess={() => {
-            setEditDialogOpen(false)
-            toast.success("Cliente actualizado con éxito")
-          }} />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirmar Eliminación</DialogTitle>
-            <DialogDescription>¿Estás seguro de que deseas eliminar este cliente? Esta acción no se puede deshacer.</DialogDescription>
-          </DialogHeader>
-          {/* Aquí pasas las props correctamente */}
-          <DeleteForm clientId={client.id} setDeleteDialogOpen={setDeleteDialogOpen} />
+          <ClientEditForm client={client} onSuccess={handleEditSuccess} />
         </DialogContent>
       </Dialog>
 
@@ -92,14 +94,12 @@ const ActionsCell = ({ client, refreshData, showToastMessage }: { client: Client
             <DialogTitle>Historial Medico</DialogTitle>
             <DialogDescription>Historial Medico del Cliente.</DialogDescription>
           </DialogHeader>
-          {/* Aquí pasas las props correctamente */}
           <MedRecordModal clientId={client.id} />
         </DialogContent>
       </Dialog>
     </div>
   );
 };
-
 
 // Definir las columnas, usando el componente ActionsCell
 export const columns: ColumnDef<Client>[] = [
@@ -146,8 +146,7 @@ export const columns: ColumnDef<Client>[] = [
       return (
         <ActionsCell
           client={client}
-          refreshData={() => { }}
-          showToastMessage={(message, status) => { }}
+          refreshData={() => { return Promise.resolve() }}
         />
       );
     },

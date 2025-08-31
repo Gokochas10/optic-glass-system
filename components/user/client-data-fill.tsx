@@ -23,6 +23,7 @@ const ClientDataFill: React.FC<InvoiceFormProps> = ({
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClient, setSelectedClient] = useState<Client>({
     id: "",
+    ruc: "",
     fullName: "",
     address: "",
     phone: "",
@@ -46,6 +47,7 @@ const ClientDataFill: React.FC<InvoiceFormProps> = ({
     } else {
       setSelectedClient({
         id: "",
+        ruc: "",
         fullName: "",
         address: "",
         phone: "",
@@ -65,6 +67,7 @@ const ClientDataFill: React.FC<InvoiceFormProps> = ({
     if (visualizing) return; // No permitir cambios en modo de visualización
     const clientData = {
       id: client.id,
+      ruc: client.ruc,
       fullName: client.fullName,
       address: client.address,
       phone: client.phone,
@@ -86,7 +89,7 @@ const ClientDataFill: React.FC<InvoiceFormProps> = ({
         <AlertTitle>{title}</AlertTitle>
         <Search
           onSelectResult={onSelectClient}
-          placeholder={`${title} por nombre`}
+          placeholder={`${title} por nombre o RUC`}
           type="client"
           disabled={visualizing} // Deshabilitar el Search en modo de visualización
         />
@@ -101,6 +104,19 @@ const ClientDataFill: React.FC<InvoiceFormProps> = ({
                 className="flex-1"
                 onChange={handleInputChange}
                 disabled={visualizing} // Deshabilitar el Input en modo de visualización
+              />
+            </div>
+
+            <div className="flex w-full items-center gap-1.5">
+              <Label htmlFor="ruc" className="flex-none w-32">RUC</Label>
+              <Input
+                id="ruc"
+                type="text"
+                value={selectedClient.ruc || ""}
+                className="flex-1"
+                onChange={handleInputChange}
+                disabled={visualizing} // Deshabilitar el Input en modo de visualización
+                placeholder="Ingrese el RUC del cliente"
               />
             </div>
 
@@ -137,17 +153,6 @@ const ClientDataFill: React.FC<InvoiceFormProps> = ({
                 id="phone"
                 type="text"
                 value={selectedClient.phone || ""}
-                className="flex-1"
-                onChange={handleInputChange}
-                disabled={visualizing} // Deshabilitar el Input en modo de visualización
-              />
-              <Label htmlFor="email" className="flex-none w-32 ml-4">
-                Correo
-              </Label>
-              <Input
-                id="email"
-                type="text"
-                value={selectedClient.email}
                 className="flex-1"
                 onChange={handleInputChange}
                 disabled={visualizing} // Deshabilitar el Input en modo de visualización
