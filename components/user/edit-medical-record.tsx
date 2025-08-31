@@ -17,36 +17,38 @@ import { Client } from "@/types/user/client-types";
 import { RecordTypes } from "@/types/user/record-types";
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 interface EditMedicalRecordProps {
-    medicalRecord: RecordTypes;
-    medicalRecordId:string;
-    }
+  medicalRecord: RecordTypes;
+  medicalRecordId: string;
+}
 
-const EditMedicalRecord: React.FC<EditMedicalRecordProps> = ({medicalRecord,medicalRecordId}) => {
+const EditMedicalRecord: React.FC<EditMedicalRecordProps> = ({ medicalRecord, medicalRecordId }) => {
   // Estados para cada sección del formulario
   const [clientData, setClientData] = useState<Client>(medicalRecord.client);
-  const [date, setDate] = useState<Date | undefined>(medicalRecord.date ? new Date(medicalRecord.date) : undefined);
-  const [reason, setReason] = useState<string>(medicalRecord.reason);
-  const [visualAcuity, setVisualAcuity] = useState<VisualAcuityFormData>(medicalRecord.visualAcuity);
-  const [refraction, setRefraction] = useState<RefractionData>(medicalRecord.refraction);
-  const [autorefractometer, setAutorefractometer] = useState<AutorefractometerData>(medicalRecord.autorefractometer);
-  const [lensometry, setLensometry] = useState<LensometryData>(medicalRecord.lensometry);
-  const [lensOptions, setLensOptions] = useState<LensOptions>(medicalRecord.lensOptions);
+  const [date, setDate] = useState<Date>(new Date(medicalRecord.date));
+  const [reason, setReason] = useState(medicalRecord.reason);
+  const [visualAcuity, setVisualAcuity] = useState(medicalRecord.visualAcuity);
+  const [refraction, setRefraction] = useState(medicalRecord.refraction);
+  const [autorefractometer, setAutorefractometer] = useState(medicalRecord.autorefractometer);
+  const [lensometry, setLensometry] = useState(medicalRecord.lensometry);
+  const [lensOptions, setLensOptions] = useState(medicalRecord.lensOptions);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Callback para actualizar los datos del cliente
   const handleClientData = (data: Client) => {
     setClientData(data);
   };
 
-  // Callback para actualizar la agudeza visual
-  const handleVisualAcuityChange = (data: VisualAcuityFormData) => {
-    setVisualAcuity(data);
-  };
-
-  // Callback para actualizar el motivo de la consulta
+  // Callback para actualizar la razón
   const handleReasonChange = (data: string) => {
     setReason(data);
+  };
+
+  // Callback para actualizar la agudeza visual
+  const handleVisualAcuityChange = (data: any) => {
+    setVisualAcuity(data);
   };
 
   // Callback para actualizar la refracción
@@ -76,6 +78,8 @@ const EditMedicalRecord: React.FC<EditMedicalRecordProps> = ({medicalRecord,medi
       return;
     }
 
+    setIsLoading(true);
+
     const recordData: RecordTypes = {
       client: clientData,
       reason: reason, // Puedes agregar un campo para el motivo
@@ -91,7 +95,7 @@ const EditMedicalRecord: React.FC<EditMedicalRecordProps> = ({medicalRecord,medi
       await editMedicalRecord(medicalRecordId, recordData);
       toast.success("Registro médico editado exitosamente.");
 
-      setClientData({age: 0, email: "", fullName: "", id: "", phone: ""});
+      setClientData({ age: 0, email: "", fullName: "", id: "", phone: "", ruc: "", job: "", address: "" });
       setDate(new Date());
       setReason("");
       setVisualAcuity({ sc: { od: "", oi: "", j: "" }, cc: { od: "", oi: "", j: "" } });
@@ -102,10 +106,12 @@ const EditMedicalRecord: React.FC<EditMedicalRecordProps> = ({medicalRecord,medi
       });
       setAutorefractometer({ rightEye: { sphere: 0, cylinder: 0, axis: 0 }, leftEye: { sphere: 0, cylinder: 0, axis: 0 } });
       setLensometry({ rightEye: { sphere: 0, cylinder: 0, axis: 0 }, leftEye: { sphere: 0, cylinder: 0, axis: 0 } });
-      setLensOptions({ lensType: "Monofocales", protections: [] });
+      setLensOptions({ lensType: "Monofocales" as const, protections: [] });
 
     } catch (error) {
       toast.error("Hubo un error al crear el registro médico.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -121,7 +127,7 @@ const EditMedicalRecord: React.FC<EditMedicalRecordProps> = ({medicalRecord,medi
           key={1}
           visualizing={true}
         />
-        <ReasonMedRecord 
+        <ReasonMedRecord
           reason={reason}
           onReasonChange={handleReasonChange}
         />
@@ -145,9 +151,20 @@ const EditMedicalRecord: React.FC<EditMedicalRecordProps> = ({medicalRecord,medi
         />
         <button
           onClick={handleSubmit}
-          className="mt-4 p-2 bg-blue-500 text-white rounded h-10  w-full"
+          disabled={isLoading}
+          className={`mt-4 p-2 text-white rounded h-10 w-full flex items-center justify-center ${isLoading
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-green-500 hover:bg-green-600'
+            }`}
         >
-          Editar Registro Médico
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Editando Registro Médico...
+            </>
+          ) : (
+            'Editar Registro Médico'
+          )}
         </button>
       </Alert>
     </div>

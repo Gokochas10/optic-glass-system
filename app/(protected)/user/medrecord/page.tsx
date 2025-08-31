@@ -16,61 +16,37 @@ import { Client } from "@/types/user/client-types";
 import { RecordTypes } from "@/types/user/record-types";
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const MedRecordPage = () => {
   // Estados para cada sección del formulario
   const [clientData, setClientData] = useState<Client>();
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [reason, setReason] = useState<string>("");
-  const [visualAcuity, setVisualAcuity] = useState<VisualAcuityFormData>({
-    sc: { od: "", oi: "", j: "" },
-    cc: { od: "", oi: "", j: "" },
-  });
-  const [refraction, setRefraction] = useState<RefractionData>({
-    rightEye: {
-      sphere: 0,
-      cylinder: 0,
-      axis: 0,
-      addition: 0,
-      dnp: 0,
-      eyeHeight: 0,
-    },
-    leftEye: {
-      sphere: 0,
-      cylinder: 0,
-      axis: 0,
-      addition: 0,
-      dnp: 0,
-      eyeHeight: 0,
-    },
+  const [date, setDate] = useState<Date>(new Date());
+  const [reason, setReason] = useState("");
+  const [visualAcuity, setVisualAcuity] = useState({ sc: { od: "", oi: "", j: "" }, cc: { od: "", oi: "", j: "" } });
+  const [refraction, setRefraction] = useState({
+    rightEye: { sphere: 0, cylinder: 0, axis: 0, addition: 0, dnp: 0, eyeHeight: 0 },
+    leftEye: { sphere: 0, cylinder: 0, axis: 0, addition: 0, dnp: 0, eyeHeight: 0 },
     notes: "",
   });
-  const [autorefractometer, setAutorefractometer] = useState<AutorefractometerData>({
-    rightEye: { sphere: 0, cylinder: 0, axis: 0 },
-    leftEye: { sphere: 0, cylinder: 0, axis: 0 },
-  });
-  const [lensometry, setLensometry] = useState<LensometryData>({
-    rightEye: { sphere: 0, cylinder: 0, axis: 0 },
-    leftEye: { sphere: 0, cylinder: 0, axis: 0 },
-  });
-  const [lensOptions, setLensOptions] = useState<LensOptions>({
-    lensType: "Monofocales",
-    protections: [],
-  });
+  const [autorefractometer, setAutorefractometer] = useState({ rightEye: { sphere: 0, cylinder: 0, axis: 0 }, leftEye: { sphere: 0, cylinder: 0, axis: 0 } });
+  const [lensometry, setLensometry] = useState({ rightEye: { sphere: 0, cylinder: 0, axis: 0 }, leftEye: { sphere: 0, cylinder: 0, axis: 0 } });
+  const [lensOptions, setLensOptions] = useState<LensOptions>({ lensType: "Monofocales", protections: [] });
+  const [isLoading, setIsLoading] = useState(false);
 
   // Callback para actualizar los datos del cliente
   const handleClientData = (data: Client) => {
     setClientData(data);
   };
 
-  // Callback para actualizar la agudeza visual
-  const handleVisualAcuityChange = (data: VisualAcuityFormData) => {
-    setVisualAcuity(data);
-  };
-
-  // Callback para actualizar el motivo de la consulta
+  // Callback para actualizar la razón
   const handleReasonChange = (data: string) => {
     setReason(data);
+  };
+
+  // Callback para actualizar la agudeza visual
+  const handleVisualAcuityChange = (data: any) => {
+    setVisualAcuity(data);
   };
 
   // Callback para actualizar la refracción
@@ -100,6 +76,8 @@ const MedRecordPage = () => {
       return;
     }
 
+    setIsLoading(true);
+
     const recordData: RecordTypes = {
       client: clientData,
       reason: reason, // Puedes agregar un campo para el motivo
@@ -125,10 +103,12 @@ const MedRecordPage = () => {
       });
       setAutorefractometer({ rightEye: { sphere: 0, cylinder: 0, axis: 0 }, leftEye: { sphere: 0, cylinder: 0, axis: 0 } });
       setLensometry({ rightEye: { sphere: 0, cylinder: 0, axis: 0 }, leftEye: { sphere: 0, cylinder: 0, axis: 0 } });
-      setLensOptions({ lensType: "Monofocales", protections: [] });
+      setLensOptions({ lensType: "Monofocales" as const, protections: [] });
 
     } catch (error) {
       toast.error("Hubo un error al crear el registro médico.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -143,7 +123,7 @@ const MedRecordPage = () => {
           title={"Buscar el cliente"}
           key={1}
         />
-        <ReasonMedRecord 
+        <ReasonMedRecord
           reason={reason}
           onReasonChange={handleReasonChange}
         />
@@ -167,9 +147,20 @@ const MedRecordPage = () => {
         />
         <button
           onClick={handleSubmit}
-          className="mt-4 p-2 bg-blue-500 text-white rounded h-10  w-full"
+          disabled={isLoading}
+          className={`mt-4 p-2 text-white rounded h-10 w-full flex items-center justify-center ${isLoading
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-blue-500 hover:bg-blue-600'
+            }`}
         >
-          Guardar Registro Médico
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Guardando Registro Médico...
+            </>
+          ) : (
+            'Guardar Registro Médico'
+          )}
         </button>
       </Alert>
     </div>
