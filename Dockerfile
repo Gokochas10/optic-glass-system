@@ -21,6 +21,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Generar el cliente de Prisma
+ENV DATABASE_URL=postgresql://opticasInnova:opticasInnova123@192.168.1.163:5480/db_opticasInnova?schema=glass_store
+ENV DIRECT_URL=postgresql://opticasInnova:opticasInnova123@192.168.1.163:5480/db_opticasInnova?schema=glass_store
+
 RUN npx prisma generate
 
 # Construir la aplicación Next.js
