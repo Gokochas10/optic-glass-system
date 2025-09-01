@@ -8,7 +8,7 @@ interface LogoutButtonProps {
 
 export const LogoutButton = ({ children }: LogoutButtonProps) => {
   const handleLogout = () => {
-    signOut();
+    signOut({ callbackUrl: "/" }); // Redirige a la página principal después de cerrar sesión
   };
 
   return <span onClick={handleLogout}>{children}</span>;
