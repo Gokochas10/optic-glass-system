@@ -34,6 +34,7 @@ export default {
       },
     }),
   ],
-  secret: process.env.NEXTAUHT_SECRET!
-
+  secret: process.env.NEXTAUTH_SECRET!,
+  // Agregar configuración de URL base
+  basePath: "/api/auth",
 } satisfies NextAuthConfig;
