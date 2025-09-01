@@ -63,6 +63,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                   type="number"
                   placeholder="Esfera"
                   value={autorefractometer.rightEye.sphere}
+                  step={0.01}
+                  min={-9999}
                   onChange={(e) =>
                     handleAutorefractometerChange("sphere", parseFloat(e.target.value), "rightEye")
                   }
@@ -76,6 +78,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleAutorefractometerChange("cylinder", parseFloat(e.target.value), "rightEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
                 <Input
                   type="number"
@@ -85,6 +89,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleAutorefractometerChange("axis", parseFloat(e.target.value), "rightEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
               </div>
             </div>
@@ -100,6 +106,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleAutorefractometerChange("sphere", parseFloat(e.target.value), "leftEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
                 <Input
                   type="number"
@@ -109,6 +117,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleAutorefractometerChange("cylinder", parseFloat(e.target.value), "leftEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
                 <Input
                   type="number"
@@ -118,6 +128,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleAutorefractometerChange("axis", parseFloat(e.target.value), "leftEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
               </div>
             </div>
@@ -144,6 +156,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleLensometryChange("sphere", parseFloat(e.target.value), "rightEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
                 <Input
                   type="number"
@@ -153,6 +167,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleLensometryChange("cylinder", parseFloat(e.target.value), "rightEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
                 <Input
                   type="number"
@@ -162,6 +178,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleLensometryChange("axis", parseFloat(e.target.value), "rightEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
               </div>
             </div>
@@ -177,6 +195,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleLensometryChange("sphere", parseFloat(e.target.value), "leftEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
                 <Input
                   type="number"
@@ -186,6 +206,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleLensometryChange("cylinder", parseFloat(e.target.value), "leftEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
                 <Input
                   type="number"
@@ -195,6 +217,8 @@ const RefractionCard:React.FC<RefractionCardProps> = (
                     handleLensometryChange("axis", parseFloat(e.target.value), "leftEye")
                   }
                   disabled={visualizing} // Deshabilitar en modo de visualización
+                  step={0.01}
+                  min={-9999}
                 />
               </div>
             </div>
